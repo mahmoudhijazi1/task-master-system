@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane fx:id="addProjectPane" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.taskmaster.Controllers.Manager.ProjectAddController">
+   <GridPane hgap="10.0" layoutX="20.0" layoutY="20.0" vgap="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+<!--      <columns>-->
+<!--         <ColumnConstraints halignment="RIGHT"/>-->
+<!--         <ColumnConstraints halignment="LEFT"/>-->
+<!--      </columns>-->
+<!--      -->
+<!--      <rows>-->
+<!--         <RowConstraints vgrow="NEVER"/>-->
+<!--         <RowConstraints vgrow="NEVER"/>-->
+<!--         <RowConstraints vgrow="NEVER"/>-->
+<!--         <RowConstraints vgrow="NEVER"/>-->
+<!--      </rows>-->
+      <Label text="Project Name:" />
+      <TextField fx:id="nameField" GridPane.columnIndex="1" />
+
+      <Label text="Description:" GridPane.rowIndex="1" />
+      <TextField fx:id="descriptionField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+      <Label text="Leader:" GridPane.rowIndex="2" />
+      <ComboBox fx:id="leaderComboBox" prefHeight="25.0" prefWidth="175.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+      <Label text="Start Date:" GridPane.rowIndex="3" />
+      <DatePicker fx:id="startDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+      <Label text="End Date:" GridPane.rowIndex="4" />
+      <DatePicker fx:id="endDatePicker" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+      <columnConstraints>
+         <ColumnConstraints />
+         <ColumnConstraints />
+      </columnConstraints>
+      <rowConstraints>
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+         <RowConstraints />
+      </rowConstraints>
+   </GridPane>
+
+      <HBox layoutX="14.0" layoutY="207.0" spacing="10.0">
+      <Button fx:id="saveButton" mnemonicParsing="false" text="Save" />
+      <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
+   </HBox>
+</AnchorPane>

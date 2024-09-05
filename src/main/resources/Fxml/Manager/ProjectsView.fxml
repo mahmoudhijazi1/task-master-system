@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.layout.*?>
+
+<BorderPane
+        fx:id="projects_parent"
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.taskmaster.Controllers.Manager.ProjectsViewController">
+
+
+    <center>
+        <fx:include source="Projects.fxml"/>
+    </center>
+
+</BorderPane>
