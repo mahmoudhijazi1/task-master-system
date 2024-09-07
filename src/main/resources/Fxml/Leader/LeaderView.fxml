@@ -10,7 +10,7 @@
         <fx:include source="LeaderMenu.fxml"/>
     </left>
     <center>
-        <fx:include source="Dashboard.fxml"/>
+        <fx:include source="LeaderDashboardView.fxml"/>
     </center>
 
 </BorderPane>

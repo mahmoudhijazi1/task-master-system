@@ -9,6 +9,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class LeaderMenuController implements Initializable {
+    @FXML
+    public Button projectsBtn;
 
     @FXML
     private Button dashboardBtn;
@@ -27,11 +29,14 @@ public class LeaderMenuController implements Initializable {
     }
 
 
-
     private void addListeners() {
         dashboardBtn.setOnAction(event -> {
             System.out.println("Dashboard Button Clicked"); // Debugging line
             handleDashboardBtnClick();
+        });
+        projectsBtn.setOnAction(event -> {
+            System.out.println("Projects Button Clicked"); // Debugging line
+            handleProjectsBtnClick();
         });
         tasksBtn.setOnAction(event -> {
             System.out.println("Tasks Button Clicked"); // Debugging line
@@ -43,8 +48,14 @@ public class LeaderMenuController implements Initializable {
         });
     }
 
+
+
     private void handleDashboardBtnClick() {
         Model.getInstance().getViewFactory().getLeaderSelectedMenuItem().set("Dashboard");
+    }
+
+    private void handleProjectsBtnClick() {
+        Model.getInstance().getViewFactory().getLeaderSelectedMenuItem().set("Projects");
     }
 
     private void handleTasksBtnClick() {

@@ -19,6 +19,11 @@
                     <FontAwesomeIconView glyphName="HOME" size="20" />
                 </graphic>
             </Button>
+            <Button fx:id="projectsBtn" mnemonicParsing="false" text="Projects">
+                <graphic>
+                    <FontAwesomeIconView glyphName="HOME" size="20" />
+                </graphic>
+            </Button>
             <Button fx:id="tasksBtn" mnemonicParsing="false" text="Tasks">
                 <graphic>
                     <FontAwesomeIconView glyphName="FOLDER" size="20" />

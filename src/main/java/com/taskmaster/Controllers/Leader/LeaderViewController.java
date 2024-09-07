@@ -15,6 +15,7 @@ public class LeaderViewController implements Initializable {
         Model.getInstance().getViewFactory().getLeaderSelectedMenuItem().addListener((observableValue, oldVal, newVal) -> {
             switch (newVal) {
                 case "Tasks" -> leaderParent.setCenter(Model.getInstance().getViewFactory().getLeaderTasksView());
+                case "Projects" -> leaderParent.setCenter(Model.getInstance().getViewFactory().getLeaderProjectsView());
                 default -> leaderParent.setCenter(Model.getInstance().getViewFactory().getLeaderDashboardView());
             }
         });

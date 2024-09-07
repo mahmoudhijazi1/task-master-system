@@ -10,6 +10,7 @@ import com.taskmaster.Models.Project;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
@@ -34,6 +35,7 @@ public class ViewFactory {
     private final StringProperty LeaderSelectedMenuItem;
 
     private AnchorPane leaderDashboardView;
+    private AnchorPane leaderProjectsView;
     private AnchorPane leaderTasksView;
     private AnchorPane taskDetailsView;
     private AnchorPane employeeManagementView;
@@ -130,9 +132,17 @@ public class ViewFactory {
 
     public AnchorPane getLeaderDashboardView() {
         if (leaderDashboardView == null){
-            leaderDashboardView = loadView("/Fxml/Leader/Dashboard.fxml");
+            leaderDashboardView = loadView("/Fxml/Leader/LeaderDashboardView.fxml");
         }
         return leaderDashboardView;
+    }
+
+    public AnchorPane getLeaderProjectsView() {
+        if (leaderProjectsView == null) {
+            leaderProjectsView = loadView("/Fxml/Leader/LeaderProjectsView.fxml");
+            System.out.println("Leader Projects View is loaded");
+        }
+        return leaderProjectsView;
     }
 
     public AnchorPane getLeaderTasksView() {
@@ -222,6 +232,7 @@ public class ViewFactory {
     public void closeStage(Stage stage) {
         stage.close();
     }
+
 
 
 }
