@@ -6,6 +6,8 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DataFetcher {
 
@@ -15,6 +17,49 @@ public class DataFetcher {
     public DataFetcher() {
         // Get a connection instance from DBConnection class
         this.connection = DBConnection.getCon();
+    }
+
+    //LOGIN LOGIC
+    /**
+     * Validate user credentials.
+     *
+     * @param username The user's username.
+     * @param password The user's password.
+     * @param role     The user's role.
+     * @return true if valid, false otherwise.
+     */
+    public boolean validateUser(String username, String password, String role) {
+        String query = "SELECT * FROM users WHERE username = ? AND password = ? AND role_id = (SELECT id FROM roles WHERE name = ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, role);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next(); // Return true if a record is found
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Fetch roles from the database.
+     *
+     * @return List of role names.
+     */
+    public List<String> getRoles() {
+        List<String> rolesList = new ArrayList<>();
+        String query = "SELECT name FROM roles";
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+            while (resultSet.next()) {
+                rolesList.add(resultSet.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rolesList;
     }
 
     /**
@@ -121,6 +166,46 @@ public class DataFetcher {
             e.printStackTrace();
         }
     }
+    /**
+     * Get the list of leaders from the database.
+     *
+     * @return ObservableList of leader names.
+     */
+    public ObservableList<String> getLeaders() {
+        ObservableList<String> leadersList = FXCollections.observableArrayList();
+        String query = "SELECT u.name FROM users u WHERE u.role_id = (SELECT id FROM roles WHERE name = 'Leader')";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                leadersList.add(resultSet.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return leadersList;
+    }
+
+    /**
+     * Get the leader's ID by name.
+     *
+     * @param leaderName The name of the leader.
+     * @return The ID of the leader.
+     */
+    public int getLeaderIdByName(String leaderName) {
+        String query = "SELECT id FROM users WHERE name = ? AND role_id = (SELECT id FROM roles WHERE name = 'Leader')";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, leaderName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no leader ID is found
+    }
 
     // Close the connection when done (optional)
     public void closeConnection() {
@@ -132,4 +217,16 @@ public class DataFetcher {
             }
         }
     }
+
+    public void updateProjectLeader(int projectId, int leaderId) {
+        String query = "UPDATE projects SET leader_id = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, leaderId);
+            preparedStatement.setInt(2, projectId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

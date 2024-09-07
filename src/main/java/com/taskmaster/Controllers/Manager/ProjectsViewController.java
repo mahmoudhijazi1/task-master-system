@@ -14,6 +14,7 @@ public class ProjectsViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Initialization code if needed
+        showProjectsList();
     }
 
     public void showProjectsList() {
@@ -26,5 +27,8 @@ public class ProjectsViewController implements Initializable {
 
     public void showEditProjectView(Project project) {
         projects_parent.setCenter(Model.getInstance().getViewFactory().getEditProjectView(project));
+    }
+
+    public void refreshData() {
     }
 }

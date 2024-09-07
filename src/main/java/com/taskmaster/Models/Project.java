@@ -23,6 +23,16 @@ public class Project {
         this.end_date = endDate;
     }
 
+    public Project(String name, String description, int leaderId, LocalDate startDate, LocalDate endDate) {
+
+        this.name = name;
+        this.description = description;
+        this.leader_id = leaderId;
+        this.start_date = startDate;
+        this.end_date = endDate;
+
+    }
+
     public int getId() {
         return id;
     }

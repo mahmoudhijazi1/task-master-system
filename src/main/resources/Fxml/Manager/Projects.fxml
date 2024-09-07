@@ -9,11 +9,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane fx:id="projects_parent"
-            prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.taskmaster.Controllers.Manager.ProjectsController">
+<AnchorPane fx:id="projects_parent" prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.taskmaster.Controllers.Manager.ProjectsController">
     <children>
-        <ScrollPane layoutX="35.0" layoutY="107.0" prefHeight="273.0" prefWidth="690.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="90.0">
+        <ScrollPane layoutX="35.0" layoutY="107.0" prefHeight="273.0" prefWidth="706.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="69.0" AnchorPane.topAnchor="90.0">
             <TableView fx:id="projectsTable" prefHeight="273.0" prefWidth="690.0">
                 <columns>
                     <TableColumn fx:id="idCol" prefWidth="118.0" text="id" />
@@ -28,12 +26,14 @@
                 <Font name="Arial" size="24.0" />
             </font>
         </Text>
-        <ButtonBar layoutX="540.0" layoutY="371.0" prefHeight="40.0" prefWidth="131.0">
+        <ButtonBar layoutX="333.0" layoutY="375.0" prefHeight="40.0" prefWidth="131.0">
             <buttons>
                 <Button fx:id="editBtn" mnemonicParsing="false" text="Edit" />
                 <Button fx:id="deleteBtn" layoutX="135.0" layoutY="18.0" mnemonicParsing="false" text="Delete" />
+                <Button fx:id="refreshBtn" layoutX="50.0" layoutY="18.0" mnemonicParsing="false" text="Refresh" />
+            <Button fx:id="setLeaderBtn" layoutX="30.0" layoutY="18.0" mnemonicParsing="false" onAction="#onSetLeaderBtn" text="Set Leader" />
             </buttons>
         </ButtonBar>
-        <Button fx:id="addProjectBtn" layoutX="642.0" layoutY="49.0" mnemonicParsing="false" text="Add Project" />
+        <Button fx:id="addProjectBtn" layoutX="603.0" layoutY="49.0" mnemonicParsing="false" text="Add Project" />
     </children>
 </AnchorPane>

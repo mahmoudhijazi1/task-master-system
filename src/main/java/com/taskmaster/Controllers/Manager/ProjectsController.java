@@ -5,25 +5,30 @@ import com.taskmaster.Models.Project;
 import com.taskmaster.Utils.DataFetcher;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ProjectsController implements Initializable {
+    public Button setLeaderBtn;
     @FXML
-    private AnchorPane projectsParent;
+    private AnchorPane projects_parent;
 
     @FXML
-    private Button deleteBtn, addProjectBtn, editBtn;
+    private Button deleteBtn, addProjectBtn, editBtn, refreshBtn;
 
     @FXML
     private TableView<Project> projectsTable;
@@ -53,18 +58,25 @@ public class ProjectsController implements Initializable {
             }
         });
         addProjectBtn.setOnAction(event -> onAddProjectBtn());
+        refreshBtn.setOnAction(event -> refreshData());
     }
+
 
     // Assuming you have a method to refresh the data in your TableView
     public void refreshData() {
         DataFetcher dataFetcher = new DataFetcher();
         ObservableList<Project> updatedProjects = dataFetcher.getProjects();
-        projectsTable.setItems(updatedProjects);
+        if(updatedProjects != null) {projectsTable.setItems(updatedProjects);}
+        else {
+            System.out.println("projects is null");
+        }
+
     }
 
     @FXML
     private void onAddProjectBtn() {
         Model.getInstance().getViewFactory().getProjectsParentViewController().showAddProjectView();
+        refreshData();
     }
 
     @FXML
@@ -96,6 +108,34 @@ public class ProjectsController implements Initializable {
             }
         } else {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a project to delete.");
+        }
+    }
+
+    @FXML
+    private void onSetLeaderBtn() {
+        Project selectedProject = projectsTable.getSelectionModel().getSelectedItem();
+        if (selectedProject != null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Manager/SetLeader.fxml"));
+                AnchorPane setLeaderPane = loader.load();
+
+                SetLeaderController controller = loader.getController();
+                controller.setProjectId(selectedProject.getId());
+
+                Stage modalStage = new Stage();
+                modalStage.initOwner(projectsTable.getScene().getWindow());
+                modalStage.setTitle("Set Leader");
+                Scene scene = new Scene(setLeaderPane);
+                modalStage.setScene(scene);
+                modalStage.showAndWait();
+
+                // Refresh the table after setting leader
+                refreshData();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a project to set its leader.");
         }
     }
 

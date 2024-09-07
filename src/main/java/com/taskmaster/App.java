@@ -13,7 +13,7 @@ import java.util.Objects;
 public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-       Model.getInstance().getViewFactory().showManagerWindow();
+       Model.getInstance().getViewFactory().showLoginWindow();
 
     }
 }

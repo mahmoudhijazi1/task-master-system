@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.taskmaster.Controllers.Manager.SetLeaderController">
+    <VBox alignment="CENTER" spacing="10" AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="10.0"
+          AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+        <Label text="Select a Leader"/>
+        <ComboBox fx:id="leaderComboBox" prefWidth="200"/>
+        <Button text="Set Leader" onAction="#setLeader"/>
+    </VBox>
+</AnchorPane>
