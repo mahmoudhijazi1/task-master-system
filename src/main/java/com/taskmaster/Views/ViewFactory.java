@@ -1,6 +1,6 @@
 package com.taskmaster.Views;
 
-import com.taskmaster.Controllers.Leader.LeaderViewController;
+import com.taskmaster.Controllers.Leader.*;
 import com.taskmaster.Controllers.Manager.ManagerController;
 import com.taskmaster.Controllers.Manager.ProjectEditController;
 import com.taskmaster.Controllers.Manager.ProjectsController;
@@ -9,8 +9,8 @@ import com.taskmaster.Models.Model;
 import com.taskmaster.Models.Project;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
@@ -35,10 +35,20 @@ public class ViewFactory {
     private final StringProperty LeaderSelectedMenuItem;
 
     private AnchorPane leaderDashboardView;
-    private AnchorPane leaderProjectsView;
-    private AnchorPane leaderTasksView;
     private AnchorPane taskDetailsView;
     private AnchorPane employeeManagementView;
+    private AnchorPane leaderProjectsList;
+    private AnchorPane leaderProjectDetailsView;
+
+    private BorderPane leaderParentView;
+    private LeaderViewController leaderParentViewController;
+    private BorderPane leaderProjectsView;
+    private LeaderProjectsViewController leaderProjectsViewController;
+    private BorderPane leaderTasksView;
+    private LeaderTasksViewController leaderTasksViewController;
+    private LeaderProjectDetailsController leaderProjectDetailsController;
+    private AnchorPane addProjectTaskDialog;
+
 
     // Constructor
     public ViewFactory() {
@@ -130,27 +140,90 @@ public class ViewFactory {
 
     // LEADER SECTION METHODS
 
+    public LeaderProjectsViewController getLeaderProjectsViewController() {
+        if (leaderProjectsViewController == null) {
+            getLeaderProjectsView();  // Initialize if not already done
+        }
+        return leaderProjectsViewController;
+    }
+    public LeaderProjectDetailsController getLeaderProjectsDetailsController() {
+        if (leaderProjectDetailsController == null) {
+
+            getLeaderProjectDetailsView();
+        }
+        return leaderProjectDetailsController;
+    }
+
+    public LeaderTasksViewController getLeaderTasksViewController() {
+        if (leaderTasksViewController == null) {
+            getLeaderTasksView();  // Initialize if not already done
+        }
+        return leaderTasksViewController;
+    }
+
     public AnchorPane getLeaderDashboardView() {
-        if (leaderDashboardView == null){
+        if (leaderDashboardView == null) {
             leaderDashboardView = loadView("/Fxml/Leader/LeaderDashboardView.fxml");
         }
         return leaderDashboardView;
     }
 
-    public AnchorPane getLeaderProjectsView() {
+    public BorderPane getLeaderProjectsView() {
         if (leaderProjectsView == null) {
-            leaderProjectsView = loadView("/Fxml/Leader/LeaderProjectsView.fxml");
-            System.out.println("Leader Projects View is loaded");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderProjectsView.fxml"));
+            try {
+                leaderProjectsView = loader.load();
+                leaderProjectsViewController = loader.getController();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return leaderProjectsView;
     }
 
-    public AnchorPane getLeaderTasksView() {
+    public BorderPane getLeaderTasksView() {
         if (leaderTasksView == null) {
-            leaderTasksView = loadView("/Fxml/Leader/LeaderTasksView.fxml");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderTasksView.fxml"));
+            try {
+                leaderTasksView = loader.load();
+                leaderTasksViewController = loader.getController();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return leaderTasksView;
     }
+
+    public AnchorPane getLeaderProjects() {
+        if (leaderProjectsList == null) {
+            leaderProjectsList = loadView("/Fxml/Leader/LeaderProjects.fxml");
+        }
+        return leaderProjectsList;
+    }
+
+    public AnchorPane getLeaderProjectDetailsView() {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderProjectDetails.fxml"));
+        try {
+            leaderProjectDetailsView = loader.load();
+            LeaderProjectDetailsController controller = loader.getController();
+            controller.setCurrentProject(Model.getInstance().getCurrentProject());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return leaderProjectDetailsView;
+    }
+    public void showAddProjectTaskDialog(){
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/AddProjectTaskDialog.fxml"));
+        try {
+            addProjectTaskDialog = loader.load();
+            AddProjectTaskController controller = loader.getController();
+            controller.setCurrentProject(Model.getInstance().getCurrentProject());
+            showWindow(loader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public AnchorPane getTaskDetailsView() {
         if (taskDetailsView == null) {

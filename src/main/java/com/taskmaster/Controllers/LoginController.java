@@ -53,10 +53,17 @@ public class LoginController {
             return;
         }
 
-        boolean isAuthenticated = authenticateUser(username, password, role);
+        DataFetcher dataFetcher = new DataFetcher();
+        boolean isAuthenticated = dataFetcher.validateUser(username, password, role);
         if (isAuthenticated) {
+            int userId = dataFetcher.getUserIdByUsername(username);
+            if (userId == -1) {
+                showAlert(Alert.AlertType.ERROR, "Error", "User ID not found!");
+                return;
+            }
+
             // Set up session and navigate to the appropriate section
-            Model.getInstance().setCurrentUser(username, role);
+            Model.getInstance().setCurrentUser(username, role, userId); // Ensure setCurrentUser can handle user ID
             Stage stage = (Stage) loginButton.getScene().getWindow();
             Model.getInstance().getViewFactory().closeStage(stage);
 
@@ -68,11 +75,10 @@ public class LoginController {
                 case "Leader":
                     Model.getInstance().getViewFactory().showLeaderWindow();
                     break;
-//                case "Developer":
-//                    // Implement the method to show the Employee window
-////                    Model.getInstance().getViewFactory().showEmployeeWindow();
-//                    System.out.println("COMING SOON!");
-//                    break;
+                case "Developer":
+                    // Implement the method to show the Employee window
+                    System.out.println("COMING SOON!");
+                    break;
                 default:
                     showAlert(Alert.AlertType.ERROR, "Error", "Unknown role!");
                     break;
@@ -80,11 +86,6 @@ public class LoginController {
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "Invalid credentials!");
         }
-    }
-
-    private boolean authenticateUser(String username, String password, String role) {
-        DataFetcher dataFetcher = new DataFetcher();
-        return dataFetcher.validateUser(username, password, role);
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {

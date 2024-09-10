@@ -29,6 +29,5 @@ public class ProjectsViewController implements Initializable {
         projects_parent.setCenter(Model.getInstance().getViewFactory().getEditProjectView(project));
     }
 
-    public void refreshData() {
-    }
+    
 }

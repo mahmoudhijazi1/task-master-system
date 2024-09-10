@@ -1,5 +1,8 @@
 package com.taskmaster.Models;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.Date;
 import java.time.LocalDate;
 
@@ -12,6 +15,7 @@ public class Project {
     private String leader_name; // New field to store the leader's name
     private LocalDate start_date;
     private LocalDate end_date;
+    private ObservableList<Task> tasks;
 
     public Project(int id, String name, String description, int leaderId, String leaderName, LocalDate startDate, LocalDate endDate) {
         this.id = id;
@@ -21,6 +25,7 @@ public class Project {
         this.leader_name = leaderName; // Initialize the new field
         this.start_date = startDate;
         this.end_date = endDate;
+        this.tasks = FXCollections.observableArrayList();
     }
 
     public Project(String name, String description, int leaderId, LocalDate startDate, LocalDate endDate) {
@@ -30,6 +35,21 @@ public class Project {
         this.leader_id = leaderId;
         this.start_date = startDate;
         this.end_date = endDate;
+        this.tasks = FXCollections.observableArrayList();
+
+
+    }
+
+    public Project(int id, String name, String description, LocalDate startDate, LocalDate endDate) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.start_date = startDate;
+        this.end_date = endDate;
+        this.tasks = FXCollections.observableArrayList();
+
+
+
 
     }
 
@@ -95,6 +115,22 @@ public class Project {
 
     public void setEnd_date(LocalDate end_date) {
         this.end_date = end_date;
+    }
+
+
+    //TASKS MANAGEMENT
+    public ObservableList<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(ObservableList<Task> tasks) {
+        if (tasks != null) {
+            this.tasks = tasks;  // Set only if the tasks list is not null
+        }
+    }
+
+    public void addTask(Task task) {
+        this.tasks.add(task);
     }
 
     // Convert LocalDate to SQL Date

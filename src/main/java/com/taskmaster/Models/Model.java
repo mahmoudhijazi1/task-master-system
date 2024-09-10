@@ -1,13 +1,16 @@
 package com.taskmaster.Models;
 
 import com.taskmaster.Views.ViewFactory;
-import javafx.stage.Stage;
 
 public class Model {
     private static Model model;
     private final ViewFactory viewFactory;
     private String currentUser;
-    private String currentUserRole;
+    private String currentRole;
+    private int currentUserId;
+    private Project currentProject;
+
+
 
     public Model() {
         this.viewFactory = new ViewFactory();
@@ -19,13 +22,15 @@ public class Model {
         }
         return model;
     }
+
     public ViewFactory getViewFactory() {
         return viewFactory;
     }
 
-    public void setCurrentUser(String username, String role) {
+    public void setCurrentUser(String username, String role, int userId) {
         this.currentUser = username;
-        this.currentUserRole = role;
+        this.currentRole = role;
+        this.currentUserId = userId;
     }
 
     public String getCurrentUser() {
@@ -33,14 +38,33 @@ public class Model {
     }
 
     public String getCurrentUserRole() {
-        return currentUserRole;
+        return currentRole;
     }
 
     public void logout() {
         currentUser = null;
-        currentUserRole = null;
+        currentRole = null;
 
         viewFactory.showLoginWindow();
     }
 
+
+
+    public String getCurrentRole() {
+        return currentRole;
+    }
+
+    public int getCurrentUserId() {
+        return currentUserId;
+    }
+
+    public Project getCurrentProject() {
+        return currentProject;
+    }
+
+    public void setCurrentProject(Project currentProject) {
+        this.currentProject = currentProject;
+    }
 }
+
+
