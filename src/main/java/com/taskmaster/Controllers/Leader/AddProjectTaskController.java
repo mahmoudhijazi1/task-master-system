@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
@@ -53,13 +54,13 @@ public class AddProjectTaskController {
         }
 
         Task task = new Task();
-        task.setProject_id(currentProject.getId());
+        task.setProjectId(currentProject.getId());
         task.setTitle(title);
         task.setDescription(description);
         task.setStatus("Pending"); // Default status or handle as needed
-        task.setStart_date(LocalDate.parse(startDate.toString()));
-        task.setEnd_date(LocalDate.parse(endDate.toString()));
-        task.setAssigned_by(Model.getInstance().getCurrentUserId());
+        task.setStartDate(LocalDate.parse(startDate.toString()));
+        task.setEndDate(LocalDate.parse(endDate.toString()));
+        task.setAssignedBy(Model.getInstance().getCurrentUserId());
 
         // Add task to the database
         DataFetcher dataFetcher = new DataFetcher();
@@ -70,5 +71,7 @@ public class AddProjectTaskController {
         } else {
             // Handle failure: Show error message or handle as needed
         }
+        Stage stage = (Stage) submitBtn.getScene().getWindow();
+        Model.getInstance().getViewFactory().closeStage(stage);
     }
 }

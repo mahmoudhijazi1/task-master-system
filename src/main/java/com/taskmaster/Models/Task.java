@@ -1,122 +1,164 @@
 package com.taskmaster.Models;
 
+import javafx.beans.property.*;
 import java.time.LocalDate;
 
 public class Task {
-    private int id;
-    private int project_id;
-    private String title;
-    private String description;
-    private String status;
-    private LocalDate start_date;
-    private LocalDate end_date;
-    private int assigned_by;
-    private String assigned_by_name;
-    private String developer;
+    private final IntegerProperty id = new SimpleIntegerProperty();
+    private final IntegerProperty projectId = new SimpleIntegerProperty();
+    private final StringProperty title = new SimpleStringProperty();
+    private final StringProperty description = new SimpleStringProperty();
+    private final StringProperty status = new SimpleStringProperty();
+    private final ObjectProperty<LocalDate> startDate = new SimpleObjectProperty<>();
+    private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();
+    private final IntegerProperty assignedBy = new SimpleIntegerProperty();
+    private final StringProperty assignedByName = new SimpleStringProperty();
+    private final StringProperty developer = new SimpleStringProperty();
 
     public Task() {}
 
-    public Task(int id, int project_id, String title, String description, String status, LocalDate start_date, LocalDate end_date, int assigned_by) {
-        this.id = id;
-        this.project_id = project_id;
-        this.title = title;
-        this.description = description;
-        this.status = status;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.assigned_by = assigned_by;
-
-
+    public Task(int id, int projectId, String title, String description, String status, LocalDate startDate, LocalDate endDate, int assignedBy) {
+        this.id.set(id);
+        this.projectId.set(projectId);
+        this.title.set(title);
+        this.description.set(description);
+        this.status.set(status);
+        this.startDate.set(startDate);
+        this.endDate.set(endDate);
+        this.assignedBy.set(assignedBy);
     }
 
-    public Task(String title, int id, int project_id, String description, String status, LocalDate start_date, LocalDate end_date, String assigned_by_name) {
-        this.title = title;
-        this.id = id;
-        this.project_id = project_id;
-        this.description = description;
-        this.status = status;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.assigned_by_name = assigned_by_name;
+    public Task(String title, int id, int projectId, String description, String status, LocalDate startDate, LocalDate endDate, String assignedByName) {
+        this.title.set(title);
+        this.id.set(id);
+        this.projectId.set(projectId);
+        this.description.set(description);
+        this.status.set(status);
+        this.startDate.set(startDate);
+        this.endDate.set(endDate);
+        this.assignedByName.set(assignedByName);
     }
 
+    // Getters and Setters for IntegerProperties
     public int getId() {
-        return id;
+        return id.get();
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.id.set(id);
     }
 
-    public int getProject_id() {
-        return project_id;
+    public IntegerProperty idProperty() {
+        return id;
     }
 
-    public void setProject_id(int project_id) {
-        this.project_id = project_id;
+    public int getProjectId() {
+        return projectId.get();
     }
 
+    public void setProjectId(int projectId) {
+        this.projectId.set(projectId);
+    }
+
+    public IntegerProperty projectIdProperty() {
+        return projectId;
+    }
+
+    public int getAssignedBy() {
+        return assignedBy.get();
+    }
+
+    public void setAssignedBy(int assignedBy) {
+        this.assignedBy.set(assignedBy);
+    }
+
+    public IntegerProperty assignedByProperty() {
+        return assignedBy;
+    }
+
+    // Getters and Setters for StringProperties
     public String getTitle() {
-        return title;
+        return title.get();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title.set(title);
+    }
+
+    public StringProperty titleProperty() {
+        return title;
     }
 
     public String getDescription() {
-        return description;
+        return description.get();
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description.set(description);
+    }
+
+    public StringProperty descriptionProperty() {
+        return description;
     }
 
     public String getStatus() {
-        return status;
+        return status.get();
     }
 
     public void setStatus(String status) {
-        this.status = status;
+        this.status.set(status);
     }
 
-    public LocalDate getStart_date() {
-        return start_date;
+    public StringProperty statusProperty() {
+        return status;
     }
 
-    public void setStart_date(LocalDate start_date) {
-        this.start_date = start_date;
+    public String getAssignedByName() {
+        return assignedByName.get();
     }
 
-    public LocalDate getEnd_date() {
-        return end_date;
+    public void setAssignedByName(String assignedByName) {
+        this.assignedByName.set(assignedByName);
     }
 
-    public void setEnd_date(LocalDate end_date) {
-        this.end_date = end_date;
-    }
-
-    public int getAssigned_by() {
-        return assigned_by;
-    }
-
-    public void setAssigned_by(int assigned_by) {
-        this.assigned_by = assigned_by;
-    }
-
-    public String getAssigned_by_name() {
-        return assigned_by_name;
-    }
-
-    public void setAssigned_by_name(String assigned_by_name) {
-        this.assigned_by_name = assigned_by_name;
+    public StringProperty assignedByNameProperty() {
+        return assignedByName;
     }
 
     public String getDeveloper() {
-        return developer;
+        return developer.get();
     }
 
     public void setDeveloper(String developer) {
-        this.developer = developer;
+        this.developer.set(developer);
+    }
+
+    public StringProperty developerProperty() {
+        return developer;
+    }
+
+    // Getters and Setters for ObjectProperties
+    public LocalDate getStartDate() {
+        return startDate.get();
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate.set(startDate);
+    }
+
+    public ObjectProperty<LocalDate> startDateProperty() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate.get();
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate.set(endDate);
+    }
+
+    public ObjectProperty<LocalDate> endDateProperty() {
+        return endDate;
     }
 }

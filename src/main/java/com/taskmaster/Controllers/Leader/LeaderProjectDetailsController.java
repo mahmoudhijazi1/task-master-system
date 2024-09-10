@@ -90,9 +90,9 @@ public class LeaderProjectDetailsController {
     private void setupTableColumns() {
         // Set up the columns for the tasks table view
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        taskDeveloperColumn.setCellValueFactory(new PropertyValueFactory<>("developer"));
+        taskDeveloperColumn.setCellValueFactory(new PropertyValueFactory<>("assignedByName"));
         taskStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-        taskDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("end_date"));
+        taskDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
 
         // Initialize the table view with the task list
         tasksTableView.setItems(tasksList);
@@ -113,7 +113,14 @@ public class LeaderProjectDetailsController {
                 throw new RuntimeException(e);
             }
         });
-        editTaskButton.setOnAction(event -> handleEditTask());
+        editTaskButton.setOnAction(event -> {
+            try {
+                handleEditTask();
+            } catch (IOException e) {
+
+
+            }
+        });
         setTaskCompletedButton.setOnAction(event -> handleSetTaskCompleted());
         tasksTableView.setOnMouseClicked(this::handleTaskSelection);
         backButton.setOnAction(event -> handleBackButton());
@@ -143,43 +150,81 @@ public class LeaderProjectDetailsController {
 
         Stage modalStage = new Stage();
         modalStage.initOwner(tasksTableView.getScene().getWindow());
-        modalStage.setTitle("Set Leader");
+        modalStage.setTitle("Add Task");
         Scene scene = new Scene(setLeaderPane);
         modalStage.setScene(scene);
         modalStage.showAndWait();
+
+        refreshData();
 
 
     }
 
     private void refreshData() {
         DataFetcher dataFetcher = new DataFetcher();
-        Project updatedTasks = dataFetcher.getProjectDetails(currentProject.getId());
-        if(updatedTasks != null) {tasksTableView.setItems(updatedTasks);}
-        else {
-            System.out.println("projects is null");
-        }
-    }
+        Project project = dataFetcher.getProjectDetails(currentProject.getId()); // Get the project details
 
-
-    private void handleEditTask() {
-        DataFetcher dataFetcher = new DataFetcher();
-
-        Task selectedTask = tasksTableView.getSelectionModel().getSelectedItem();
-        if (selectedTask != null) {
-            Task updatedTask = showTaskDialog(selectedTask);
-            if (updatedTask != null) {
-                dataFetcher.updateTask(updatedTask); // Update task in the database
-                tasksTableView.refresh();            // Refresh the table view
+        if (project != null) {
+            // Extract the tasks from the project
+            ObservableList<Task> updatedTasks = project.getTasks();
+            if (updatedTasks != null) {
+                tasksTableView.setItems(updatedTasks); // Update the TableView with the tasks
+            } else {
+                System.out.println("Tasks list is null");
             }
+        } else {
+            System.out.println("Project is null");
         }
     }
+
+
+
+    private void handleEditTask() throws IOException {
+        System.out.println("edit btn pressed");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/EditProjectTaskDialog.fxml"));
+            AnchorPane editTaskPane = loader.load();
+            EditProjectTaskController controller = loader.getController();
+
+            controller.setCurrentProject(currentProject);
+
+            // Assuming you have a way to get the selected task
+            Task selectedTask = tasksTableView.getSelectionModel().getSelectedItem();
+            if (selectedTask != null) {
+                controller.setTaskToEdit(selectedTask);
+            } else {
+                // Show error if no task is selected
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("No Task Selected");
+                alert.setContentText("Please select a task to edit.");
+                alert.showAndWait();
+                return;
+            }
+
+            Stage modalStage = new Stage();
+            modalStage.initOwner(tasksTableView.getScene().getWindow());
+            modalStage.setTitle("Edit Task");
+            Scene scene = new Scene(editTaskPane);
+            modalStage.setScene(scene);
+            modalStage.showAndWait();
+
+            refreshData();
+        } catch (IOException e) {
+            e.printStackTrace(); // Print the error to see what went wrong
+            return;
+        }
+
+
+         // Refresh tasks table after editing
+    }
+
 
     private void handleSetTaskCompleted() {
         DataFetcher dataFetcher = new DataFetcher();
         Task selectedTask = tasksTableView.getSelectionModel().getSelectedItem();
         if (selectedTask != null) {
             selectedTask.setStatus("Completed");
-            dataFetcher.updateTask(selectedTask);  // Update status in the database
+            dataFetcher.setTaskStatus(selectedTask);  // Update status in the database
             tasksTableView.refresh();              // Refresh the table view
         }
     }

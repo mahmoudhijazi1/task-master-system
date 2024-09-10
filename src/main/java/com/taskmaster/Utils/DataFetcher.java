@@ -293,8 +293,8 @@ public class DataFetcher {
                 int id = projectResult.getInt("id");
                 String name = projectResult.getString("name");
                 String description = projectResult.getString("description");
-                LocalDate startDate = projectResult.getDate("start_date").toLocalDate();
-                LocalDate endDate = projectResult.getDate("end_date").toLocalDate();
+                LocalDate startDate = projectResult.getDate("start_date") != null ? projectResult.getDate("start_date").toLocalDate() : null;
+                LocalDate endDate = projectResult.getDate("end_date") != null ? projectResult.getDate("end_date").toLocalDate() : null;
 
                 project = new Project(id, name, description, startDate, endDate);
             }
@@ -321,11 +321,11 @@ public class DataFetcher {
                     String title = tasksResult.getString("title");
                     String description = tasksResult.getString("description");
                     String status = tasksResult.getString("status");
-                    LocalDate startDate = tasksResult.getDate("start_date").toLocalDate();
-                    LocalDate endDate = tasksResult.getDate("end_date").toLocalDate();
-                    String leader_name = tasksResult.getString("leader_name");
+                    LocalDate startDate = tasksResult.getDate("start_date") != null ? tasksResult.getDate("start_date").toLocalDate() : null;
+                    LocalDate endDate = tasksResult.getDate("end_date") != null ? tasksResult.getDate("end_date").toLocalDate() : null;
+                    String leaderName = tasksResult.getString("leader_name");
 
-                    Task task = new Task(title, id, projectId, description, status, startDate, endDate, leader_name);
+                    Task task = new Task(title, id, projectId, description, status, startDate, endDate, leaderName);
                     tasksList.add(task);
                 }
 
@@ -342,18 +342,19 @@ public class DataFetcher {
 
 
 
+
     public boolean addTask(Task task) {
         String query = "INSERT INTO tasks (project_id, title, description, status, start_date, end_date, assigned_by) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setInt(1, task.getProject_id());
+            preparedStatement.setInt(1, task.getProjectId());
             preparedStatement.setString(2, task.getTitle());
             preparedStatement.setString(3, task.getDescription());
             preparedStatement.setString(4, task.getStatus());
-            preparedStatement.setDate(5, Date.valueOf(task.getStart_date()));
-            preparedStatement.setDate(6, Date.valueOf(task.getEnd_date()));
-            preparedStatement.setInt(7, task.getAssigned_by());
+            preparedStatement.setDate(5, Date.valueOf(task.getStartDate()));
+            preparedStatement.setDate(6, Date.valueOf(task.getEndDate()));
+            preparedStatement.setInt(7, task.getAssignedBy());
 
             int affectedRows = preparedStatement.executeUpdate();
 
@@ -371,18 +372,52 @@ public class DataFetcher {
         return false;
     }
 
-    public boolean updateTask(Task task) {
-        String query = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ?, assigned_by = ? " +
-                "WHERE id = ?";
+    public boolean updateTask(Task task, Integer projectIdToUpdate) {
+        String query;
+
+        // If projectIdToUpdate is provided, include project-specific conditions in the SQL query
+        if (projectIdToUpdate != null) {
+            query = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ? WHERE id = ? AND project_id = ?";
+        } else {
+            query = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ?, project_id = ?, assigned_by = ? WHERE id = ?";
+        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            // Set common parameters first
             preparedStatement.setString(1, task.getTitle());
             preparedStatement.setString(2, task.getDescription());
             preparedStatement.setString(3, task.getStatus());
-            preparedStatement.setDate(4, Date.valueOf(task.getStart_date()));
-            preparedStatement.setDate(5, Date.valueOf(task.getEnd_date()));
-            preparedStatement.setInt(6, task.getAssigned_by());
-            preparedStatement.setInt(7, task.getId());
+            preparedStatement.setDate(4, Date.valueOf(task.getStartDate()));
+            preparedStatement.setDate(5, Date.valueOf(task.getEndDate()));
+
+            if (projectIdToUpdate != null) {
+                // Set parameters for project-specific update
+                preparedStatement.setInt(6, task.getId());
+                preparedStatement.setInt(7, projectIdToUpdate);
+            } else {
+                // Set parameters for general task update
+                preparedStatement.setInt(6, task.getProjectId());
+                preparedStatement.setInt(7, task.getAssignedBy());
+                preparedStatement.setInt(8, task.getId());
+            }
+
+            int affectedRows = preparedStatement.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    public boolean setTaskStatus(Task task) {
+        String query = "UPDATE tasks SET  status = ? WHERE id = ? " ;
+
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, task.getStatus());
+            preparedStatement.setInt(2, task.getId());
 
             int affectedRows = preparedStatement.executeUpdate();
             return affectedRows > 0; // Return true if the update was successful
