@@ -1,4 +1,4 @@
-package com.taskmaster.Controllers.Leader;
+package com.taskmaster.Controllers.Developer;
 
 import com.taskmaster.Models.Model;
 import javafx.fxml.FXML;
@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class LeaderMenuController implements Initializable {
+public class DeveloperMenuController implements Initializable {
     @FXML
     public Button projectsBtn;
 
@@ -52,15 +52,15 @@ public class LeaderMenuController implements Initializable {
 
 
     private void handleDashboardBtnClick() {
-        Model.getInstance().getViewFactory().getLeaderSelectedMenuItem().set("Dashboard");
+        Model.getInstance().getViewFactory().getDeveloperSelectedMenuItem().set("Dashboard");
     }
 
     private void handleProjectsBtnClick() {
-        Model.getInstance().getViewFactory().getLeaderSelectedMenuItem().set("Projects");
+        Model.getInstance().getViewFactory().getDeveloperSelectedMenuItem().set("Projects");
     }
 
     private void handleTasksBtnClick() {
-        Model.getInstance().getViewFactory().getLeaderSelectedMenuItem().set("Tasks");
+        Model.getInstance().getViewFactory().getDeveloperSelectedMenuItem().set("Tasks");
 
     }
 

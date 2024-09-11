@@ -13,6 +13,7 @@ public class ManagerMenuController implements Initializable {
     public Button dashboardBtn;
     public Button projectsBtn;
     public Button logoutBtn;
+    public Button usersBtn;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -23,7 +24,10 @@ public class ManagerMenuController implements Initializable {
         dashboardBtn.setOnAction(event -> onDashboard());
         projectsBtn.setOnAction(event -> onProjects());
         logoutBtn.setOnAction(event -> onLogout());
+        usersBtn.setOnAction(event -> onUsers());
     }
+
+
 
     private void onLogout() {
         Stage stage  = (Stage) logoutBtn.getScene().getWindow();
@@ -39,5 +43,7 @@ public class ManagerMenuController implements Initializable {
     private void onProjects() {
         Model.getInstance().getViewFactory().getManagerSelectedMenuItem().set("Projects");
     }
+
+    private void onUsers() {Model.getInstance().getViewFactory().getManagerSelectedMenuItem().set("Users");}
 }
 

@@ -77,7 +77,7 @@ public class LoginController {
                     break;
                 case "Developer":
                     // Implement the method to show the Employee window
-                    System.out.println("COMING SOON!");
+                    Model.getInstance().getViewFactory().showDeveloperWindow();
                     break;
                 default:
                     showAlert(Alert.AlertType.ERROR, "Error", "Unknown role!");

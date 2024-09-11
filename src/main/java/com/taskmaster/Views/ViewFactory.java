@@ -1,5 +1,7 @@
 package com.taskmaster.Views;
 
+import com.taskmaster.Controllers.Developer.DeveloperTasksViewController;
+import com.taskmaster.Controllers.Developer.DeveloperViewController;
 import com.taskmaster.Controllers.Leader.*;
 import com.taskmaster.Controllers.Manager.ManagerController;
 import com.taskmaster.Controllers.Manager.ProjectEditController;
@@ -11,6 +13,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
@@ -30,6 +33,7 @@ public class ViewFactory {
     private AnchorPane projectDetailsView;
     private ProjectsViewController projectsParentViewController;
     private ProjectsController projectsController;
+    private AnchorPane usersView;
 
     // LEADER SECTION DECLARATIONS
     private final StringProperty LeaderSelectedMenuItem;
@@ -54,16 +58,15 @@ public class ViewFactory {
     public ViewFactory() {
         this.managerSelectedMenuItem = new SimpleStringProperty("");
         this.LeaderSelectedMenuItem = new SimpleStringProperty("");
+        this.DeveloperSelectedMenuItem = new SimpleStringProperty("");
     }
+
+
+    public StringProperty getManagerSelectedMenuItem() {return managerSelectedMenuItem;}
+    public StringProperty getLeaderSelectedMenuItem() { return LeaderSelectedMenuItem;}
+    public StringProperty getDeveloperSelectedMenuItem() { return DeveloperSelectedMenuItem;}
 
     // MANAGER SECTION METHODS
-
-    public StringProperty getManagerSelectedMenuItem() {
-        return managerSelectedMenuItem;
-    }
-    public StringProperty getLeaderSelectedMenuItem() {
-        return LeaderSelectedMenuItem;
-    }
 
     public AnchorPane getDashboardView() {
         if (dashboardView == null) {
@@ -110,6 +113,12 @@ public class ViewFactory {
             projectsView = loadView("/Fxml/Manager/Projects.fxml");
         }
         return projectsView;
+    }
+    public AnchorPane getUsersView() {
+        if (usersView == null) {
+            usersView = loadView("/Fxml/Manager/Users.fxml");
+        }
+        return usersView;
     }
 
     public AnchorPane getAddProjectView() {
@@ -259,7 +268,15 @@ public class ViewFactory {
         if (Model.getInstance().getCurrentUserRole().equals("Leader")) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderView.fxml"));
             loader.setController(new LeaderViewController());
-//            System.out.println(loader.getController().toString());
+            showWindow(loader);
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Access Denied", "You do not have permission to access this section.");
+        }
+    }
+    public void showDeveloperWindow() {
+        if (Model.getInstance().getCurrentUserRole().equals("Developer")) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Developer/DeveloperView.fxml"));
+            loader.setController(new DeveloperViewController());
             showWindow(loader);
         } else {
             showAlert(Alert.AlertType.ERROR, "Access Denied", "You do not have permission to access this section.");
@@ -306,6 +323,55 @@ public class ViewFactory {
         stage.close();
     }
 
+//    private final StringProperty LeaderSelectedMenuItem;
+//
+//    private AnchorPane leaderDashboardView;
+//    private AnchorPane taskDetailsView;
+//    private AnchorPane employeeManagementView;
+//    private AnchorPane leaderProjectsList;
+//    private AnchorPane leaderProjectDetailsView;
+//
+//    private BorderPane leaderParentView;
+//    private LeaderViewController leaderParentViewController;
+//    private BorderPane leaderProjectsView;
+//    private LeaderProjectsViewController leaderProjectsViewController;
+//    private BorderPane leaderTasksView;
+//    private LeaderTasksViewController leaderTasksViewController;
+//    private LeaderProjectDetailsController leaderProjectDetailsController;
+//    private AnchorPane addProjectTaskDialog;
+
+    private final StringProperty DeveloperSelectedMenuItem;
+
+    private AnchorPane developerDashboardView;
+    private BorderPane developerTasksView;
+    private BorderPane developerProjectsView;
+    private DeveloperTasksViewController developerTasksViewController;
 
 
+
+    public AnchorPane getDeveloperDashboardView() {
+        if (developerDashboardView == null) {
+            developerDashboardView = loadView("/Fxml/Developer/DeveloperDashboardView.fxml");
+        }
+        return developerDashboardView;
+    }
+
+    public BorderPane getDeveloperTasksView() {
+        if (developerTasksView == null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Developer/DeveloperTasksView.fxml"));
+            try {
+                developerTasksView = loader.load();
+                developerTasksViewController = loader.getController();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return developerTasksView;
+    }
+    public DeveloperTasksViewController getDeveloperTasksViewController() {
+        if (developerTasksViewController == null) {
+            getDeveloperTasksView();  // Initialize if not already done
+        }
+        return developerTasksViewController;
+    }
 }

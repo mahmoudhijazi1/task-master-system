@@ -7,20 +7,24 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Text?>
 
-<VBox  fx:controller="com.taskmaster.Controllers.Manager.ManagerMenuController"
-       maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="180.0" styleClass="main-menu-container"  xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
-    <AnchorPane prefHeight="630.0" prefWidth="160.0" styleClass="left-container" >
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="180.0" styleClass="main-menu-container" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.taskmaster.Controllers.Developer.DeveloperMenuController">
+    <AnchorPane prefHeight="630.0" prefWidth="160.0" styleClass="left-container">
         <VBox layoutX="40.0" layoutY="-13.0" prefHeight="80.0" prefWidth="160.0" styleClass="header-container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <FontAwesomeIconView glyphName="USER" size="30" />
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Manager " />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Developer" />
         </VBox>
-        <VBox layoutX="10.0" layoutY="109.0" prefHeight="400.0" prefWidth="160.0" styleClass="menu-container" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+        <VBox layoutY="101.0" prefHeight="400.0" prefWidth="160.0" styleClass="menu-container" stylesheets="@../../Styles/menu.css" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="101.0">
             <Button fx:id="dashboardBtn" mnemonicParsing="false" text="Dashboard">
                 <graphic>
                     <FontAwesomeIconView glyphName="HOME" size="20" />
                 </graphic>
             </Button>
-            <Button fx:id="projectsBtn" mnemonicParsing="false" text="Projects">
+<!--            <Button fx:id="projectsBtn" mnemonicParsing="false" text="Projects">-->
+<!--                <graphic>-->
+<!--                    <FontAwesomeIconView glyphName="HOME" size="20" />-->
+<!--                </graphic>-->
+<!--            </Button>-->
+            <Button fx:id="tasksBtn" mnemonicParsing="false" text="Tasks">
                 <graphic>
                     <FontAwesomeIconView glyphName="FOLDER" size="20" />
                 </graphic>
@@ -29,11 +33,6 @@
             <Button fx:id="logoutBtn" mnemonicParsing="false" text="Logout">
                 <graphic>
                     <FontAwesomeIconView glyphName="EXTERNAL_LINK" size="20" />
-                </graphic>
-            </Button>
-            <Button fx:id="usersBtn" mnemonicParsing="false" text="Users">
-                <graphic>
-                    <FontAwesomeIconView glyphName="USERS" size="20" />
                 </graphic>
             </Button>
         </VBox>

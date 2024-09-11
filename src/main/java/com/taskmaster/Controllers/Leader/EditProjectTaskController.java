@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class EditProjectTaskController {
     @FXML
@@ -22,6 +23,8 @@ public class EditProjectTaskController {
     public DatePicker endDateField;
     @FXML
     public Button submitBtn;
+    @FXML
+    public ComboBox<String> developerCombo;
 
 
     private Project currentProject;
@@ -31,9 +34,17 @@ public class EditProjectTaskController {
         // Initialize status combo box with possible values
         statusCombo.getItems().addAll("Pending", "In Progress", "Completed");
 
+        loadDevelopers();
         // Set up the submit button action
         submitBtn.setOnAction(event -> handleSubmit());
 
+    }
+
+    private void loadDevelopers() {
+        DataFetcher dataFetcher = new DataFetcher();
+        // Assume getDevelopers() returns a List<String> of developer names
+        List<String> developers = dataFetcher.getDevelopers();
+        developerCombo.getItems().addAll(developers);
     }
 
     public void setCurrentProject(Project project) {
@@ -54,6 +65,7 @@ public class EditProjectTaskController {
             statusCombo.setValue(currentTask.getStatus());
             startDateField.setValue(currentTask.getStartDate());
             endDateField.setValue(currentTask.getEndDate());
+            developerCombo.setValue(currentTask.getDeveloperName());
         }
     }
 
@@ -64,6 +76,7 @@ public class EditProjectTaskController {
             currentTask.setStatus(statusCombo.getValue());
             currentTask.setStartDate(startDateField.getValue());
             currentTask.setEndDate(endDateField.getValue());
+            currentTask.setDeveloperName(developerCombo.getValue());
 
             // Update the task in the database
             DataFetcher dataFetcher = new DataFetcher();

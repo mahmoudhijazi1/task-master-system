@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.taskmaster.Controllers.Leader.LeaderTasksController">
+    <ScrollPane layoutX="35.0" layoutY="107.0" prefHeight="355.0" prefWidth="690.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="30.0" AnchorPane.topAnchor="90.0">
+        <TableView fx:id="tasksTable" prefHeight="352.0" prefWidth="687.0">
+            <columns>
+                <TableColumn fx:id="titleCol" prefWidth="178.0" text="Title" />
+                <TableColumn fx:id="statusCol" minWidth="0.0" prefWidth="122.0" text="Status" />
+                <TableColumn fx:id="startDateCol" minWidth="0.0" prefWidth="119.0" text="Start Date" />
+                <TableColumn fx:id="endDateCol" minWidth="0.0" prefWidth="124.0" text="End Date" />
+                <TableColumn fx:id="developerCol" minWidth="0.0" prefWidth="143.0" text="Developer" />
+            </columns>
+        </TableView>
+    </ScrollPane>
+    <Text layoutX="30.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks" wrappingWidth="124.0">
+        <font>
+            <Font name="Arial" size="24.0" />
+        </font>
+    </Text>
+    <ButtonBar layoutX="455.0" layoutY="453.0" prefHeight="40.0" prefWidth="131.0">
+        <buttons>
+            <Button fx:id="editBtn" mnemonicParsing="false" text="Edit" />
+            <Button fx:id="deleteBtn" layoutX="135.0" layoutY="18.0" mnemonicParsing="false" text="Delete" />
+            <Button fx:id="refreshBtn" layoutX="50.0" layoutY="18.0" mnemonicParsing="false" text="Refresh" />
+
+        </buttons>
+    </ButtonBar>
+   <ComboBox fx:id="filterCombo" layoutX="570.0" layoutY="49.0" prefWidth="150.0" promptText="Filter Status" AnchorPane.leftAnchor="570.0" AnchorPane.topAnchor="49.0" />
+</AnchorPane>
