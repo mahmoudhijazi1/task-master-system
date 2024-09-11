@@ -10,6 +10,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.geometry.Insets?>
 <AnchorPane prefHeight="400.0" prefWidth="492.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.taskmaster.Controllers.Leader.AddProjectTaskController">
     <VBox fillWidth="false" layoutX="59.0" layoutY="65.0" prefHeight="254.0" prefWidth="374.0" spacing="10.0" AnchorPane.leftAnchor="59.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="65.0">
         <Label text="Title" />
@@ -20,6 +22,11 @@
         <DatePicker fx:id="startDateField" />
         <Label text="End Date" />
         <DatePicker fx:id="endDateField" />
+        <ComboBox fx:id="developerCombo" prefWidth="150.0" promptText="Developer">
+            <VBox.margin>
+                <Insets top="10.0" />
+            </VBox.margin>
+        </ComboBox>
     </VBox>
     <ButtonBar layoutX="146.0" layoutY="319.0" prefHeight="40.0" prefWidth="200.0" />
     <Text layoutX="222.0" layoutY="44.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add Task" AnchorPane.leftAnchor="222.0" AnchorPane.rightAnchor="221.390625" AnchorPane.topAnchor="20.0" />

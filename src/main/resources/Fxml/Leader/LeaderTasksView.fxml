@@ -11,10 +11,6 @@
             fx:controller="com.taskmaster.Controllers.Leader.LeaderTasksViewController">
     <center>
 
-    <Text layoutX="322.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasks">
-        <font>
-            <Font size="22.0"/>
-        </font>
-    </Text>
+    <fx:include source="LeaderTasks.fxml"/>
     </center>
 </BorderPane>

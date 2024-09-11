@@ -140,7 +140,7 @@ public class DataFetcher {
      * @return The ID of the user, or -1 if no user is found.
      */
     public int getUserIdByUsername(String username) {
-        String query = "SELECT id FROM users WHERE username = ?";
+        String query = "SELECT id FROM users WHERE name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -204,7 +204,7 @@ public class DataFetcher {
      * @param project The Project object to be added.
      */
     public void addProject(Project project) {
-        String query = "INSERT INTO projects (name, description, leader_id, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO projects (name, description, leader_id, start_date, end_date, manager_id) VALUES (?, ?, ?, ?, ?, 1)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, project.getName());
@@ -305,9 +305,10 @@ public class DataFetcher {
 
         // Fetch Related Tasks if the project exists
         if (project != null) {
-            String tasksQuery = "SELECT t.id, t.title, t.description, t.status, t.start_date, t.end_date, u.name AS leader_name " +
+            String tasksQuery = "SELECT t.id, t.title, t.description, t.status, t.start_date, t.end_date, u.name AS developer_name " +
                     "FROM tasks t " +
-                    "JOIN users u ON t.assigned_by = u.id " +
+                    "JOIN assigned_tasks at ON t.id = at.task_id " +     // Join with pivot table to get assigned tasks
+                    "JOIN users u ON at.user_id = u.id " +               // Join with users to get developer's name
                     "WHERE t.project_id = ?";
 
             ObservableList<Task> tasksList = FXCollections.observableArrayList();
@@ -317,15 +318,14 @@ public class DataFetcher {
                 ResultSet tasksResult = tasksStmt.executeQuery();
 
                 while (tasksResult.next()) {
-                    int id = tasksResult.getInt("id");
-                    String title = tasksResult.getString("title");
-                    String description = tasksResult.getString("description");
-                    String status = tasksResult.getString("status");
-                    LocalDate startDate = tasksResult.getDate("start_date") != null ? tasksResult.getDate("start_date").toLocalDate() : null;
-                    LocalDate endDate = tasksResult.getDate("end_date") != null ? tasksResult.getDate("end_date").toLocalDate() : null;
-                    String leaderName = tasksResult.getString("leader_name");
-
-                    Task task = new Task(title, id, projectId, description, status, startDate, endDate, leaderName);
+                    Task task = new Task();
+                    task.setId(tasksResult.getInt("id"));
+                    task.setTitle(tasksResult.getString("title"));
+                    task.setDescription(tasksResult.getString("description"));
+                    task.setStatus(tasksResult.getString("status"));
+                    task.setStartDate(tasksResult.getDate("start_date").toLocalDate());
+                    task.setEndDate(tasksResult.getDate("end_date").toLocalDate());
+                    task.setDeveloperName(tasksResult.getString("developer_name"));  // Custom property to hold developer's name
                     tasksList.add(task);
                 }
 
@@ -340,69 +340,164 @@ public class DataFetcher {
         return project;
     }
 
+    public List<Task> getTasksForLeader(int leaderId) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT t.id, t.title,t.description, t.status, t.start_date, t.end_date, u.name AS developer_name " +
+                "FROM tasks t " +
+                "LEFT JOIN assigned_tasks at ON t.id = at.task_id " +
+                "LEFT JOIN users u ON at.user_id = u.id " +
+                "WHERE t.assigned_by = ?";
 
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, leaderId);
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-
-    public boolean addTask(Task task) {
-        String query = "INSERT INTO tasks (project_id, title, description, status, start_date, end_date, assigned_by) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setInt(1, task.getProjectId());
-            preparedStatement.setString(2, task.getTitle());
-            preparedStatement.setString(3, task.getDescription());
-            preparedStatement.setString(4, task.getStatus());
-            preparedStatement.setDate(5, Date.valueOf(task.getStartDate()));
-            preparedStatement.setDate(6, Date.valueOf(task.getEndDate()));
-            preparedStatement.setInt(7, task.getAssignedBy());
-
-            int affectedRows = preparedStatement.executeUpdate();
-
-            // If insert is successful, we can get the generated task ID
-            if (affectedRows > 0) {
-                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    task.setId(generatedKeys.getInt(1)); // Set the generated ID in the task object
-                }
-                return true;
+            while (resultSet.next()) {
+                Task task = new Task();
+                task.setId(resultSet.getInt("id"));
+                task.setTitle(resultSet.getString("title"));
+                task.setDescription(resultSet.getString("description"));
+                task.setStatus(resultSet.getString("status"));
+                task.setStartDate(resultSet.getDate("start_date").toLocalDate());
+                task.setEndDate(resultSet.getDate("end_date").toLocalDate());
+                task.setDeveloperName(resultSet.getString("developer_name"));  // Custom property to hold developer's name
+                tasks.add(task);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return tasks;
+    }
+
+
+
+
+    public boolean addTask(Task task, String developerName) {
+        String taskQuery = "INSERT INTO tasks (project_id, title, description, status, start_date, end_date, assigned_by) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String assignedTasksQuery = "INSERT INTO assigned_tasks (task_id, user_id, assigned_date) VALUES (?, ?, ?)";
+        int developerId = getUserIdByUsername(developerName);
+
+        try {
+            // Start a transaction
+            connection.setAutoCommit(false);
+
+            // Insert the new task
+            int taskId = -1;
+            try (PreparedStatement taskPreparedStatement = connection.prepareStatement(taskQuery, Statement.RETURN_GENERATED_KEYS)) {
+                taskPreparedStatement.setInt(1, task.getProjectId());
+                taskPreparedStatement.setString(2, task.getTitle());
+                taskPreparedStatement.setString(3, task.getDescription());
+                taskPreparedStatement.setString(4, task.getStatus());
+                taskPreparedStatement.setDate(5, Date.valueOf(task.getStartDate()));
+                taskPreparedStatement.setDate(6, Date.valueOf(task.getEndDate()));
+                taskPreparedStatement.setInt(7, task.getAssignedBy());
+
+                int affectedRows = taskPreparedStatement.executeUpdate();
+
+                // If insert is successful, get the generated task ID
+                if (affectedRows > 0) {
+                    try (ResultSet generatedKeys = taskPreparedStatement.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            taskId = generatedKeys.getInt(1); // Set the generated ID in the task object
+                        }
+                    }
+                } else {
+                    // Rollback and return false if no rows were affected
+                    connection.rollback();
+                    return false;
+                }
+            }
+
+            if (taskId > 0) {
+                // Insert into the assigned_tasks table
+                try (PreparedStatement assignedTasksPreparedStatement = connection.prepareStatement(assignedTasksQuery)) {
+                    assignedTasksPreparedStatement.setInt(1, taskId);
+                    assignedTasksPreparedStatement.setInt(2, developerId);
+                    assignedTasksPreparedStatement.setDate(3, Date.valueOf(LocalDate.now())); // Set the assigned date to now
+
+                    int affectedRows = assignedTasksPreparedStatement.executeUpdate();
+                    if (affectedRows > 0) {
+                        // Commit the transaction
+                        connection.commit();
+                        return true;
+                    } else {
+                        // Rollback if no rows were affected
+                        connection.rollback();
+                    }
+                }
+            } else {
+                // Rollback if task ID is invalid
+                connection.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                // Rollback transaction in case of error
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+        } finally {
+            try {
+                // Reset auto-commit to true
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
 
     public boolean updateTask(Task task, Integer projectIdToUpdate) {
-        String query;
+        String taskQuery;
+        String assignedTasksQuery = "UPDATE assigned_tasks SET user_id = ? WHERE task_id = ?";
 
         // If projectIdToUpdate is provided, include project-specific conditions in the SQL query
         if (projectIdToUpdate != null) {
-            query = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ? WHERE id = ? AND project_id = ?";
+            taskQuery = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ? WHERE id = ? AND project_id = ?";
         } else {
-            query = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ?, project_id = ?, assigned_by = ? WHERE id = ?";
+            taskQuery = "UPDATE tasks SET title = ?, description = ?, status = ?, start_date = ?, end_date = ?, project_id = ?, assigned_by = ? WHERE id = ?";
         }
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            // Set common parameters first
-            preparedStatement.setString(1, task.getTitle());
-            preparedStatement.setString(2, task.getDescription());
-            preparedStatement.setString(3, task.getStatus());
-            preparedStatement.setDate(4, Date.valueOf(task.getStartDate()));
-            preparedStatement.setDate(5, Date.valueOf(task.getEndDate()));
+        try {
+            // Update task details
+            try (PreparedStatement taskPreparedStatement = connection.prepareStatement(taskQuery)) {
+                // Set common parameters first
+                taskPreparedStatement.setString(1, task.getTitle());
+                taskPreparedStatement.setString(2, task.getDescription());
+                taskPreparedStatement.setString(3, task.getStatus());
+                taskPreparedStatement.setDate(4, Date.valueOf(task.getStartDate()));
+                taskPreparedStatement.setDate(5, Date.valueOf(task.getEndDate()));
 
-            if (projectIdToUpdate != null) {
-                // Set parameters for project-specific update
-                preparedStatement.setInt(6, task.getId());
-                preparedStatement.setInt(7, projectIdToUpdate);
-            } else {
-                // Set parameters for general task update
-                preparedStatement.setInt(6, task.getProjectId());
-                preparedStatement.setInt(7, task.getAssignedBy());
-                preparedStatement.setInt(8, task.getId());
+                if (projectIdToUpdate != null) {
+                    // Set parameters for project-specific update
+                    taskPreparedStatement.setInt(6, task.getId());
+                    taskPreparedStatement.setInt(7, projectIdToUpdate);
+                } else {
+                    // Set parameters for general task update
+                    taskPreparedStatement.setInt(6, task.getProjectId());
+                    taskPreparedStatement.setInt(7, task.getAssignedBy());
+                    taskPreparedStatement.setInt(8, task.getId());
+                }
+
+                int affectedRows = taskPreparedStatement.executeUpdate();
+                if (affectedRows == 0) {
+                    return false; // Task update failed
+                }
             }
 
-            int affectedRows = preparedStatement.executeUpdate();
-            return affectedRows > 0;
+            // Update the assigned developer
+            try (PreparedStatement assignedTasksPreparedStatement = connection.prepareStatement(assignedTasksQuery)) {
+                // Assuming you have a method to get the user ID from developer name
+                int developerId = getUserIdFromUserName(task.getDeveloperName());
+                assignedTasksPreparedStatement.setInt(1, developerId);
+                assignedTasksPreparedStatement.setInt(2, task.getId());
+
+                int affectedRows = assignedTasksPreparedStatement.executeUpdate();
+                return affectedRows > 0;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -436,6 +531,43 @@ public class DataFetcher {
                 e.printStackTrace();
             }
         }
+    }
+
+    private int getUserIdFromUserName(String developerName) {
+        String query = "SELECT id FROM users WHERE name = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, developerName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return a default or error value if not found
+    }
+
+    public List<String> getDevelopers() {
+
+        ObservableList<String> developersList = FXCollections.observableArrayList();
+        String query = "SELECT u.name FROM users u WHERE u.role_id = (SELECT id FROM roles WHERE name = 'Developer')";
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                developersList.add(resultSet.getString("name"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        if (developersList.size() > 0) {
+            System.out.println("got developers");
+        }else{
+            System.out.println("no developers");
+        }
+        return developersList;
+
     }
 }
 

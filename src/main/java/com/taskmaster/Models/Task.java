@@ -13,11 +13,13 @@ public class Task {
     private final ObjectProperty<LocalDate> endDate = new SimpleObjectProperty<>();
     private final IntegerProperty assignedBy = new SimpleIntegerProperty();
     private final StringProperty assignedByName = new SimpleStringProperty();
-    private final StringProperty developer = new SimpleStringProperty();
+    private final StringProperty developerName = new SimpleStringProperty(); // Corrected name
 
+    // Default constructor
     public Task() {}
 
-    public Task(int id, int projectId, String title, String description, String status, LocalDate startDate, LocalDate endDate, int assignedBy) {
+    // Constructor with developerName
+    public Task(int id, int projectId, String title, String description, String status, LocalDate startDate, LocalDate endDate, int assignedBy, String developerName) {
         this.id.set(id);
         this.projectId.set(projectId);
         this.title.set(title);
@@ -26,8 +28,10 @@ public class Task {
         this.startDate.set(startDate);
         this.endDate.set(endDate);
         this.assignedBy.set(assignedBy);
+        this.developerName.set(developerName);
     }
 
+    // Constructor with assignedByName
     public Task(String title, int id, int projectId, String description, String status, LocalDate startDate, LocalDate endDate, String assignedByName) {
         this.title.set(title);
         this.id.set(id);
@@ -125,16 +129,16 @@ public class Task {
         return assignedByName;
     }
 
-    public String getDeveloper() {
-        return developer.get();
+    public String getDeveloperName() {
+        return developerName.get();
     }
 
-    public void setDeveloper(String developer) {
-        this.developer.set(developer);
+    public void setDeveloperName(String developerName) {
+        this.developerName.set(developerName);
     }
 
-    public StringProperty developerProperty() {
-        return developer;
+    public StringProperty developerNameProperty() {
+        return developerName;
     }
 
     // Getters and Setters for ObjectProperties

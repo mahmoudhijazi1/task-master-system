@@ -81,6 +81,9 @@ public class LeaderProjectDetailsController {
             tasksList.clear();
             System.out.println(project.getTasks().size());
             tasksList.addAll(project.getTasks());
+            for (Task task : tasksList) {
+                System.out.println(task.getDeveloperName());
+            }
             tasksTableView.setItems(tasksList);
         } else {
             showAlert(Alert.AlertType.ERROR, "Error", "Failed to load project details.");
@@ -90,13 +93,14 @@ public class LeaderProjectDetailsController {
     private void setupTableColumns() {
         // Set up the columns for the tasks table view
         taskNameColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        taskDeveloperColumn.setCellValueFactory(new PropertyValueFactory<>("assignedByName"));
+        taskDeveloperColumn.setCellValueFactory(new PropertyValueFactory<>("developerName")); // Corrected
         taskStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         taskDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("endDate"));
 
         // Initialize the table view with the task list
         tasksTableView.setItems(tasksList);
     }
+
 
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Alert alert = new Alert(alertType);
