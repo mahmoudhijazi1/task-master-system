@@ -1,5 +1,6 @@
 package com.taskmaster.Controllers.Leader;
 
+import com.taskmaster.App;
 import com.taskmaster.Models.Model;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -68,5 +69,8 @@ public class LeaderMenuController implements Initializable {
         Stage stage  = (Stage) logoutBtn.getScene().getWindow();
         stage.close();
         Model.getInstance().logout();
+        Model.getInstance().getViewFactory().getLeaderProjectsController().clearData();
+        Model.getInstance().getViewFactory().getLeaderTasksController().clearData();
+
     }
 }

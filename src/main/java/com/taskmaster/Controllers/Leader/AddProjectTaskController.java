@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,7 +27,13 @@ public class AddProjectTaskController {
     @FXML
     public void initialize() {
         // Initialize any necessary UI components or event handlers
-        submitBtn.setOnAction(event -> handleSubmitButton());
+        submitBtn.setOnAction(event -> {
+            try {
+                handleSubmitButton();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
         loadDevelopers();
     }
 
@@ -46,7 +53,7 @@ public class AddProjectTaskController {
 
 
 
-    private void handleSubmitButton() {
+    private void handleSubmitButton() throws SQLException {
         if (currentProject == null ) {
             // Handle error: No project or user selected
             return;

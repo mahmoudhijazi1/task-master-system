@@ -10,8 +10,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class DeveloperMenuController implements Initializable {
-    @FXML
-    public Button projectsBtn;
+
 
     @FXML
     private Button dashboardBtn;
@@ -35,10 +34,7 @@ public class DeveloperMenuController implements Initializable {
             System.out.println("Dashboard Button Clicked"); // Debugging line
             handleDashboardBtnClick();
         });
-        projectsBtn.setOnAction(event -> {
-            System.out.println("Projects Button Clicked"); // Debugging line
-            handleProjectsBtnClick();
-        });
+
         tasksBtn.setOnAction(event -> {
             System.out.println("Tasks Button Clicked"); // Debugging line
             handleTasksBtnClick();
@@ -55,9 +51,7 @@ public class DeveloperMenuController implements Initializable {
         Model.getInstance().getViewFactory().getDeveloperSelectedMenuItem().set("Dashboard");
     }
 
-    private void handleProjectsBtnClick() {
-        Model.getInstance().getViewFactory().getDeveloperSelectedMenuItem().set("Projects");
-    }
+
 
     private void handleTasksBtnClick() {
         Model.getInstance().getViewFactory().getDeveloperSelectedMenuItem().set("Tasks");

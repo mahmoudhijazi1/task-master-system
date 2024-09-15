@@ -1,5 +1,6 @@
 package com.taskmaster.Utils;
 
+import com.taskmaster.Models.Model;
 import com.taskmaster.Models.Project;
 import com.taskmaster.Models.Task;
 import com.taskmaster.Models.User;
@@ -143,6 +144,19 @@ public class DataFetcher {
      */
     public int getUserIdByUsername(String username) {
         String query = "SELECT id FROM users WHERE username = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1; // Return -1 if no user ID is found
+    }
+    public int getUserIdByName(String username) {
+        String query = "SELECT id FROM users WHERE name = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -351,7 +365,7 @@ public class DataFetcher {
                 "WHERE t.assigned_by = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, leaderId);
+            preparedStatement.setInt(1, Model.getInstance().getCurrentUserId());
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
@@ -374,11 +388,23 @@ public class DataFetcher {
 
 
 
-    public boolean addTask(Task task, String developerName) {
+    public boolean addTask(Task task, String developerName) throws SQLException {
         String taskQuery = "INSERT INTO tasks (project_id, title, description, status, start_date, end_date, assigned_by) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         String assignedTasksQuery = "INSERT INTO assigned_tasks (task_id, user_id, assigned_date) VALUES (?, ?, ?)";
-        int developerId = getUserIdByUsername(developerName);
+        int developerId = getUserIdByName(developerName);
+        if (developerId == -1) {
+            System.out.println("Developer not found: " + developerName);
+            try {
+                connection.setAutoCommit(false);
+                connection.rollback();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }finally {
+                connection.setAutoCommit(true);  // Re-enable autocommit
+            }
+            return false;
+        }
 
         try {
             // Start a transaction

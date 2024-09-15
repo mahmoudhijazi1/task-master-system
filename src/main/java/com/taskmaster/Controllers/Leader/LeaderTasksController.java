@@ -31,10 +31,11 @@ public class LeaderTasksController {
     private TableColumn<Task, String> endDateCol;
 
     @FXML
-    private TableColumn<AssignedTask, String> developerCol;
+    private TableColumn<Task, String> developerCol;
 
     private ObservableList<Task> tasksList;
-    @FXML public ComboBox<String> filterCombo;
+    @FXML
+    public ComboBox<String> filterCombo;
 
     private FilteredList<Task> filteredTasks;
 
@@ -48,18 +49,25 @@ public class LeaderTasksController {
 
         filterCombo.setItems(FXCollections.observableArrayList("All", "Completed", "In Progress", "Pending"));
 
+        filterCombo.setOnAction(event -> filterTasks());
 
         // Load data
         loadTasksData();
-
-        filterCombo.setOnAction(event -> filterTasks());
     }
 
-    private void loadTasksData() {
+    public void loadTasksData() {
+        System.out.println("Loading Tasks");
+        // Clear existing data
+        clearData();
+
+        // Fetch new data
         DataFetcher dataFetcher = new DataFetcher();  // Or use Dependency Injection if available
         tasksList = FXCollections.observableArrayList(dataFetcher.getTasksForLeader(Model.getInstance().getCurrentUserId()));
+
         // Use FilteredList to enable filtering
         filteredTasks = new FilteredList<>(tasksList, p -> true);
+
+        // Update TableView
         tasksTable.setItems(filteredTasks);
     }
 
@@ -70,6 +78,21 @@ public class LeaderTasksController {
             filteredTasks.setPredicate(task -> true); // Show all tasks
         } else {
             filteredTasks.setPredicate(task -> task.getStatus().equalsIgnoreCase(selectedFilter));
+        }
+    }
+
+    public void clearData() {
+        // Clear the filteredTasks and tasksList
+        if (filteredTasks != null) {
+            filteredTasks.setPredicate(task -> false); // Effectively clears the filtered list
+        }
+
+        if (tasksList != null) {
+            tasksList.clear(); // Clear the observable list
+        }
+
+        if (tasksTable != null) {
+            tasksTable.setItems(FXCollections.observableArrayList()); // Reset the TableView
         }
     }
 }

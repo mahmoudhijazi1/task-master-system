@@ -52,6 +52,10 @@ public class ViewFactory {
     private LeaderTasksViewController leaderTasksViewController;
     private LeaderProjectDetailsController leaderProjectDetailsController;
     private AnchorPane addProjectTaskDialog;
+    private AnchorPane leaderTasks;
+
+    private LeaderProjectsController leaderProjectsController;
+    private LeaderTasksController leaderTasksController;
 
 
     // Constructor
@@ -149,6 +153,22 @@ public class ViewFactory {
 
     // LEADER SECTION METHODS
 
+    public LeaderTasksController getLeaderTasksController() {
+        if (leaderTasksController == null) {
+            getLeaderTasks();
+        }
+        return leaderTasksController;
+    }
+
+
+
+    public LeaderProjectsController getLeaderProjectsController() {
+        if (leaderProjectsController == null) {
+            getLeaderProjects();
+        }
+        return leaderProjectsController;
+    }
+
     public LeaderProjectsViewController getLeaderProjectsViewController() {
         if (leaderProjectsViewController == null) {
             getLeaderProjectsView();  // Initialize if not already done
@@ -205,10 +225,18 @@ public class ViewFactory {
 
     public AnchorPane getLeaderProjects() {
         if (leaderProjectsList == null) {
-            leaderProjectsList = loadView("/Fxml/Leader/LeaderProjects.fxml");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderProjects.fxml"));
+            try {
+                leaderProjectsList = loader.load();
+                // Assign the controller after loading the FXML
+                leaderProjectsController = loader.getController();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return leaderProjectsList;
     }
+
 
     public AnchorPane getLeaderProjectDetailsView() {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderProjectDetails.fxml"));
@@ -221,6 +249,22 @@ public class ViewFactory {
         }
         return leaderProjectDetailsView;
     }
+
+    public AnchorPane getLeaderTasks() {
+        if (leaderTasks == null) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/LeaderTasks.fxml"));
+            try {
+                leaderTasks = loader.load();
+                // Assign the controller after loading the FXML
+                leaderTasksController = loader.getController();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return leaderTasks;
+    }
+
+
     public void showAddProjectTaskDialog(){
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/Fxml/Leader/AddProjectTaskDialog.fxml"));
         try {
@@ -374,4 +418,8 @@ public class ViewFactory {
         }
         return developerTasksViewController;
     }
+
+
+
+
 }

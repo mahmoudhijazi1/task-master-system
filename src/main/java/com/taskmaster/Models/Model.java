@@ -36,6 +36,9 @@ public class Model {
     public String getCurrentUser() {
         return currentUser;
     }
+    public void clearCurrentUser() {
+        this.currentUser = null;  // Clear user data
+    }
 
     public String getCurrentUserRole() {
         return currentRole;
@@ -44,7 +47,7 @@ public class Model {
     public void logout() {
         currentUser = null;
         currentRole = null;
-
+        currentUserId = 0;
         viewFactory.showLoginWindow();
     }
 

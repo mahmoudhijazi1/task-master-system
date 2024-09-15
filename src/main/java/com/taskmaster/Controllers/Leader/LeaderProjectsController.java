@@ -38,7 +38,8 @@ public class LeaderProjectsController implements Initializable {
 
 
 
-    private void showProjects() {
+    public void showProjects() {
+        System.out.println("Showing projects");
         DataFetcher dataFetcher = new DataFetcher();
         ObservableList<Project> projects = dataFetcher.getProjectsByUserId(Model.getInstance().getCurrentUserId());
         projectsTable.setItems(projects);
@@ -66,6 +67,14 @@ public class LeaderProjectsController implements Initializable {
         Model.getInstance().setCurrentProject(selectedProject);
 
         Model.getInstance().getViewFactory().getLeaderProjectsViewController().showProjectDetails();
+    }
+
+    public void clearData(){
+        if (projectsTable != null) {
+            projectsTable.getItems().clear();
+        }else{
+            System.out.println("NOTHING TO CLEAR");
+        }
     }
 
 

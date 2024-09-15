@@ -73,6 +73,8 @@ public class LoginController {
                     Model.getInstance().getViewFactory().showManagerWindow();
                     break;
                 case "Leader":
+                    Model.getInstance().getViewFactory().getLeaderProjectsController().showProjects();
+                    Model.getInstance().getViewFactory().getLeaderTasksController().loadTasksData();
                     Model.getInstance().getViewFactory().showLeaderWindow();
                     break;
                 case "Developer":

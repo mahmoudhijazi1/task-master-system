@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.Objects;
 
 public class App extends Application {
+
+    private static Stage primaryStage;
     @Override
     public void start(Stage stage) throws IOException {
        Model.getInstance().getViewFactory().showLoginWindow();
